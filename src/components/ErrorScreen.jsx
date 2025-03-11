@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 // import apiSource
 
 function ErrorScreen(
@@ -12,6 +13,7 @@ function ErrorScreen(
   return (
     <div>
       <p>Error 404: Page not found</p>
+      <Link to={"/"}>Back to Request Form</Link>
     </div>
   );
 }

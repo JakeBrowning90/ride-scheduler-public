@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router";
+
 // import apiSource
 
 function ConfirmScreen(
@@ -12,6 +14,7 @@ function ConfirmScreen(
   return (
     <div>
       <p>Request received, we'll follow up shortly. Thanks!</p>
+      <Link to={"/"}>Back to Request Form</Link>
     </div>
   );
 }

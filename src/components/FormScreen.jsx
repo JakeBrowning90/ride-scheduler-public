@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-// import apiSource
+import { apiSource } from "../apiSource";
+import { useNavigate } from "react-router";
 
 function FormScreen(
   {
@@ -7,36 +8,39 @@ function FormScreen(
   }
 ) {
   // State declarations
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [pickupLoc, setPickupLoc] = useState("");
-  const [pickupTime, setPickupTime] = useState("");
-  const [dropoffLoc, setDropoffLoc] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [pickUpLocation, setPickUpLocation] = useState("");
+  const [pickUpTime, setPickUpTime] = useState("");
+  const [dropOffLocation, setDropOffLocation] = useState("");
   const [passengerCt, setPassengerCt] = useState(1);
-  const [luggage, setLuggage] = useState(false);
+  const [hasLuggage, setHasLuggage] = useState(false);
   const [notes, setNotes] = useState("");
+  const [rideSubmitError, setRideSubmitError] = useState([]);
 
   // Functions
-  const handleName = (e) => {
-    setName(e.target.value);
+  const navigate = useNavigate();
+
+  const handleClientName = (e) => {
+    setClientName(e.target.value);
   };
-  const handlePhone = (e) => {
-    setPhone(e.target.value);
+  const handleClientPhone = (e) => {
+    setClientPhone(e.target.value);
   };
-  const handlePickupLoc = (e) => {
-    setPickupLoc(e.target.value);
+  const handlePickUpLocation = (e) => {
+    setPickUpLocation(e.target.value);
   };
-  const handlePickupTime = (e) => {
-    setPickupTime(e.target.value);
+  const handlePickUpTime = (e) => {
+    setPickUpTime(e.target.value);
   };
-  const handleDropoffLoc = (e) => {
-    setDropoffLoc(e.target.value);
+  const handleDropOffLocation = (e) => {
+    setDropOffLocation(e.target.value);
   };
   const handlePassengerCt = (e) => {
     setPassengerCt(e.target.value);
   };
-  const handleLuggage = (e) => {
-    setLuggage(e.target.value);
+  const handleHasLuggage = (e) => {
+    setHasLuggage(e.target.value);
   };
   const handleNotes = (e) => {
     setNotes(e.target.value);
@@ -44,14 +48,30 @@ function FormScreen(
 
   async function submitRequest(e) {
     e.preventDefault();
-    console.log(name);
-    console.log(phone);
-    console.log(pickupLoc);
-    console.log(pickupTime);
-    console.log(dropoffLoc);
-    console.log(passengerCt);
-    console.log(luggage);
-    console.log(notes);
+    console.log(pickUpTime);
+    const response = await fetch(apiSource + "ride", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        clientName: clientName,
+        clientPhone: clientPhone,
+        pickUpLocation: pickUpLocation,
+        pickUpTime: pickUpTime,
+        dropOffLocation: dropOffLocation,
+        passengerCt: passengerCt,
+        hasLuggage: hasLuggage,
+        notes: notes,
+      }),
+    });
+    const newRideResponse = await response.json();
+    if (Array.isArray(newRideResponse.errors)) {
+      setRideSubmitError(newRideResponse.errors);
+    } else {
+      navigate("/success");
+    }
   }
 
   // Render
@@ -59,45 +79,52 @@ function FormScreen(
     <div>
       <p>Request form</p>
       <form onSubmit={submitRequest}>
-        <label htmlFor="">Name:</label>
+        {/* TODO: Add input attributes */}
+        <label htmlFor="clientName">Name:</label>
         <input
           type="text"
-          name="name"
-          id="name"
-          value={name}
-          onChange={handleName}
+          name="clientName"
+          id="clientName"
+          value={clientName}
+          onChange={handleClientName}
+          required
         />
-        <label htmlFor="">Phone number:</label>
+        <label htmlFor="clientPhone">Phone number:</label>
+        <input
+          type="tel"
+          name="clientPhone"
+          id="clientPhone"
+          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+          value={clientPhone}
+          onChange={handleClientPhone}
+          required
+        />
+        <label htmlFor="pickUpLocation">Pick-up location:</label>
         <input
           type="text"
-          name="phone"
-          id="phone"
-          value={phone}
-          onChange={handlePhone}
+          name="pickUpLocation"
+          id="pickUpLocation"
+          value={pickUpLocation}
+          onChange={handlePickUpLocation}
+          required
         />
-        <label htmlFor="">Pick-up location:</label>
-        <input
-          type="text"
-          name="pickupLoc"
-          id="pickupLoc"
-          value={pickupLoc}
-          onChange={handlePickupLoc}
-        />
-        <label htmlFor="">Pick-up time:</label>
+        <label htmlFor="pickUpTime">Pick-up time:</label>
         <input
           type="datetime-local"
-          name="pickupTime"
-          id="pickupTime"
-          value={pickupTime}
-          onChange={handlePickupTime}
+          name="pickUpTime"
+          id="pickUpTime"
+          value={pickUpTime}
+          onChange={handlePickUpTime}
+          required
         />
-        <label htmlFor="">Drop-off location:</label>
+        <label htmlFor="dropOffLocation">Drop-off location:</label>
         <input
           type="text"
-          name="dropoffLoc"
-          id="dropoffLoc"
-          value={dropoffLoc}
-          onChange={handleDropoffLoc}
+          name="dropOffLocation"
+          id="dropOffLocation"
+          value={dropOffLocation}
+          onChange={handleDropOffLocation}
+          required
         />
         <label htmlFor="">Passenger count:</label>
         <input
@@ -106,16 +133,17 @@ function FormScreen(
           id="passengerCt"
           value={passengerCt}
           onChange={handlePassengerCt}
+          required
         />
-        <label htmlFor="">Extra Luggage:</label>
+        <label htmlFor="hasLuggage">Extra Luggage:</label>
         <input
           type="checkbox"
-          name="luggage"
-          id="luggage"
-          value={luggage}
-          onChange={handleLuggage}
+          name="hasLuggage"
+          id="hasLuggage"
+          value={hasLuggage}
+          onChange={handleHasLuggage}
         />
-        <label htmlFor="">Additional notes:</label>
+        <label htmlFor="notes">Additional notes:</label>
         <textarea
           name="notes"
           id="notes"

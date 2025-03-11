@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 // import apiSource
 
 function FormFailScreen(
@@ -12,6 +13,7 @@ function FormFailScreen(
   return (
     <div>
       <p>Submission failed, please try again later.</p>
+      <Link to={"/"}>Back to Request Form</Link>
     </div>
   );
 }
