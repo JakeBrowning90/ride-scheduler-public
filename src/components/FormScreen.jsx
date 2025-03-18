@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { apiSource } from "../apiSource";
 import { useNavigate } from "react-router";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 
 function FormScreen(
   {
@@ -80,8 +82,10 @@ function FormScreen(
       <p>Request form</p>
       <form onSubmit={submitRequest}>
         {/* TODO: Add input attributes */}
-        <label htmlFor="clientName">Name:</label>
-        <input
+
+        <TextField
+          label="Name"
+          variant="filled"
           type="text"
           name="clientName"
           id="clientName"
@@ -89,8 +93,9 @@ function FormScreen(
           onChange={handleClientName}
           required
         />
-        <label htmlFor="clientPhone">Phone number:</label>
-        <input
+        <TextField
+          label="Phone number"
+          variant="filled"
           type="tel"
           name="clientPhone"
           id="clientPhone"
@@ -99,8 +104,9 @@ function FormScreen(
           onChange={handleClientPhone}
           required
         />
-        <label htmlFor="pickUpLocation">Pick-up location:</label>
-        <input
+        <TextField
+          label="Pick-up Location"
+          variant="filled"
           type="text"
           name="pickUpLocation"
           id="pickUpLocation"
@@ -150,7 +156,8 @@ function FormScreen(
           value={notes}
           onChange={handleNotes}
         />
-        <button>Submit</button>
+        <Button variant="contained">Submit</Button>
+        {/* <button>Submit</button> */}
       </form>
     </div>
   );
