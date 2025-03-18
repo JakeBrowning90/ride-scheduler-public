@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { apiSource } from "../apiSource";
 import { useNavigate } from "react-router";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 function FormScreen(
   {
@@ -13,7 +17,7 @@ function FormScreen(
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [pickUpLocation, setPickUpLocation] = useState("");
-  const [pickUpTime, setPickUpTime] = useState("");
+  const [pickUpTime, setPickUpTime] = useState(null);
   const [dropOffLocation, setDropOffLocation] = useState("");
   const [passengerCt, setPassengerCt] = useState(1);
   const [hasLuggage, setHasLuggage] = useState(false);
@@ -50,7 +54,6 @@ function FormScreen(
 
   async function submitRequest(e) {
     e.preventDefault();
-    console.log(pickUpTime);
     const response = await fetch(apiSource + "ride", {
       method: "POST",
       mode: "cors",
@@ -78,9 +81,9 @@ function FormScreen(
 
   // Render
   return (
-    <div>
-      <p>Request form</p>
-      <form onSubmit={submitRequest}>
+    <>
+      <p>Ride Request Form</p>
+      <Box component="form" onSubmit={submitRequest}>
         {/* TODO: Add input attributes */}
 
         <TextField
@@ -91,6 +94,7 @@ function FormScreen(
           id="clientName"
           value={clientName}
           onChange={handleClientName}
+          slotProps={{ htmlInput: { minLength: 1, maxLength: 30 } }}
           required
         />
         <TextField
@@ -105,61 +109,74 @@ function FormScreen(
           required
         />
         <TextField
-          label="Pick-up Location"
+          label="Pick-up location"
           variant="filled"
           type="text"
           name="pickUpLocation"
           id="pickUpLocation"
           value={pickUpLocation}
           onChange={handlePickUpLocation}
+          slotProps={{ htmlInput: { minLength: 1, maxLength: 30 } }}
           required
         />
-        <label htmlFor="pickUpTime">Pick-up time:</label>
-        <input
-          type="datetime-local"
+        <DateTimePicker
+          label="Pick-up time"
           name="pickUpTime"
           id="pickUpTime"
+          disablePast
           value={pickUpTime}
-          onChange={handlePickUpTime}
+          onChange={(newValue) => setPickUpTime(newValue)}
           required
         />
-        <label htmlFor="dropOffLocation">Drop-off location:</label>
-        <input
+        <TextField
+          label="Drop-off location"
+          variant="filled"
           type="text"
           name="dropOffLocation"
           id="dropOffLocation"
           value={dropOffLocation}
           onChange={handleDropOffLocation}
+          slotProps={{ htmlInput: { minLength: 1, maxLength: 160 } }}
           required
         />
-        <label htmlFor="">Passenger count:</label>
-        <input
+        <TextField
+          label="Passenger count"
           type="number"
           name="passengerCt"
           id="passengerCt"
+          slotProps={{ htmlInput: { min: 1, max: 10 } }}
           value={passengerCt}
           onChange={handlePassengerCt}
           required
         />
-        <label htmlFor="hasLuggage">Extra Luggage:</label>
-        <input
-          type="checkbox"
-          name="hasLuggage"
-          id="hasLuggage"
-          value={hasLuggage}
-          onChange={handleHasLuggage}
+        <FormControlLabel
+          className="luggageLabel"
+          control={
+            <Switch
+              name="hasLuggage"
+              id="hasLuggage"
+              value={hasLuggage}
+              onChange={handleHasLuggage}
+            />
+          }
+          label="Extra luggage:"
+          labelPlacement="start"
         />
-        <label htmlFor="notes">Additional notes:</label>
-        <textarea
+        <TextField
+          label="Additional notes"
+          multiline
+          rows={4}
           name="notes"
           id="notes"
+          slotProps={{ htmlInput: { maxLength: 160 } }}
           value={notes}
           onChange={handleNotes}
         />
-        <Button variant="contained">Submit</Button>
-        {/* <button>Submit</button> */}
-      </form>
-    </div>
+        <Button type="submit" variant="contained">
+          Submit
+        </Button>
+      </Box>
+    </>
   );
 }
 
